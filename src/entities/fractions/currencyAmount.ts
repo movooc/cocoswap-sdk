@@ -66,4 +66,8 @@ export class CurrencyAmount extends Fraction {
     Big.DP = this.currency.decimals
     return new Big(this.numerator.toString()).div(this.denominator.toString()).toFormat(format)
   }
+
+  public static fromRawAmount<T extends Currency>(currency: T, rawAmount: BigintIsh): CurrencyAmount {
+    return new CurrencyAmount(currency, rawAmount)
+  }
 }
