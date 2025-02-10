@@ -65,9 +65,25 @@ export abstract class Router {
    * @param trade to produce call parameters for
    * @param options options for the call parameters
    */
-  public static swapCallParameters(trade: Trade, options: TradeOptions, routerMode: number, pathArr: string[]): SwapParameters {
-    const etherIn = trade.inputAmount.currency === ETHER
-    const etherOut = trade.outputAmount.currency === ETHER
+  public static swapCallParameters(trade: Trade, options: TradeOptions, routerMode: number, pathArr: string[], isBNB: boolean): SwapParameters {
+
+    // let etherIn = trade.inputAmount.currency === ETHER
+    // let etherOut = trade.outputAmount.currency === ETHER
+
+    let etherIn = false
+    let etherOut = false
+
+    if (isBNB){
+      if (trade.inputAmount.currency.symbol == 'WBNB') {
+        etherIn = true
+      }
+
+      if (trade.inputAmount.currency.symbol == 'WBNB') {
+        etherOut = true
+      }
+    }
+
+    
     // the router does not support both ether in and out
     invariant(!(etherIn && etherOut), 'ETHER_IN_OUT')
     invariant(options.ttl > 0, 'TTL')
