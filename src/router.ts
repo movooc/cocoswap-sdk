@@ -78,7 +78,7 @@ export abstract class Router {
         etherIn = true
       }
 
-      if (trade.inputAmount.currency.symbol == 'WBNB') {
+      if (trade.outputAmount.currency.symbol == 'WBNB') {
         etherOut = true
       }
     }
