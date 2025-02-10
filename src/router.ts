@@ -65,7 +65,7 @@ export abstract class Router {
    * @param trade to produce call parameters for
    * @param options options for the call parameters
    */
-  public static swapCallParameters(trade: Trade, options: TradeOptions): SwapParameters {
+  public static swapCallParameters(trade: Trade, options: TradeOptions, routerMode: number): SwapParameters {
     const etherIn = trade.inputAmount.currency === ETHER
     const etherOut = trade.outputAmount.currency === ETHER
     // the router does not support both ether in and out
@@ -77,6 +77,7 @@ export abstract class Router {
     const amountOut: string = toHex(trade.minimumAmountOut(options.allowedSlippage))
     const path: string[] = trade.route.path.map(token => token.address)
     const deadline = `0x${(Math.floor(new Date().getTime() / 1000) + options.ttl).toString(16)}`
+    const _routerMode: string = routerMode.toString()
     const useFeeOnTransfer = Boolean(options.feeOnTransfer)
 
     let methodName: string
@@ -87,19 +88,19 @@ export abstract class Router {
         if (etherIn) {
           methodName = useFeeOnTransfer ? 'swapExactETHForTokensSupportingFeeOnTransferTokens' : 'swapExactETHForTokens'
           // (uint amountOutMin, address[] calldata path, address to, uint deadline)
-          args = [amountOut, path, to, deadline]
+          args = [amountOut, path, _routerMode, to, deadline]
           value = amountIn
         } else if (etherOut) {
           methodName = useFeeOnTransfer ? 'swapExactTokensForETHSupportingFeeOnTransferTokens' : 'swapExactTokensForETH'
           // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
-          args = [amountIn, amountOut, path, to, deadline]
+          args = [amountIn, amountOut, path, _routerMode, to, deadline]
           value = ZERO_HEX
         } else {
           methodName = useFeeOnTransfer
             ? 'swapExactTokensForTokensSupportingFeeOnTransferTokens'
             : 'swapExactTokensForTokens'
           // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
-          args = [amountIn, amountOut, path, to, deadline]
+          args = [amountIn, amountOut, path, _routerMode, to, deadline]
           value = ZERO_HEX
         }
         break
