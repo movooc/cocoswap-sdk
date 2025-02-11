@@ -65,7 +65,7 @@ export abstract class Router {
    * @param trade to produce call parameters for
    * @param options options for the call parameters
    */
-  public static swapCallParameters(trade: Trade, options: TradeOptions, routerMode: number, pathArr: string[], isBNB: boolean): SwapParameters {
+  public static swapCallParameters(trade: Trade, options: TradeOptions, routerMode: number, pathArr: string[], isBNB: boolean, isExactIn: boolean): SwapParameters {
 
     // let etherIn = trade.inputAmount.currency === ETHER
     // let etherOut = trade.outputAmount.currency === ETHER
@@ -99,47 +99,89 @@ export abstract class Router {
     let methodName: string
     let args: (string | string[])[]
     let value: string
-    switch (trade.tradeType) {
-      case TradeType.EXACT_INPUT:
-        if (etherIn) {
-          methodName = useFeeOnTransfer ? 'swapExactETHForTokensSupportingFeeOnTransferTokens' : 'swapExactETHForTokens'
-          // (uint amountOutMin, address[] calldata path, address to, uint deadline)
-          args = [amountOut, pathArr, _routerMode, to, deadline]
-          value = amountIn
-        } else if (etherOut) {
-          methodName = useFeeOnTransfer ? 'swapExactTokensForETHSupportingFeeOnTransferTokens' : 'swapExactTokensForETH'
-          // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
-          args = [amountIn, amountOut, pathArr, _routerMode, to, deadline]
-          value = ZERO_HEX
-        } else {
-          methodName = useFeeOnTransfer
-            ? 'swapExactTokensForTokensSupportingFeeOnTransferTokens'
-            : 'swapExactTokensForTokens'
-          // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
-          args = [amountIn, amountOut, pathArr, _routerMode, to, deadline]
-          value = ZERO_HEX
-        }
-        break
-      case TradeType.EXACT_OUTPUT:
-        invariant(!useFeeOnTransfer, 'EXACT_OUT_FOT')
-        if (etherIn) {
-          methodName = 'swapETHForExactTokens'
-          // (uint amountOut, address[] calldata path, address to, uint deadline)
-          args = [amountOut, pathArr, to, deadline]
-          value = amountIn
-        } else if (etherOut) {
-          methodName = 'swapTokensForExactETH'
-          // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
-          args = [amountOut, amountIn, pathArr, to, deadline]
-          value = ZERO_HEX
-        } else {
-          methodName = 'swapTokensForExactTokens'
-          // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
-          args = [amountOut, amountIn, pathArr, to, deadline]
-          value = ZERO_HEX
-        }
-        break
+
+
+    if (isExactIn){
+      if (etherIn) {
+        methodName = useFeeOnTransfer ? 'swapExactETHForTokensSupportingFeeOnTransferTokens' : 'swapExactETHForTokens'
+        // (uint amountOutMin, address[] calldata path, address to, uint deadline)
+        args = [amountOut, pathArr, _routerMode, to, deadline]
+        value = amountIn
+      } else if (etherOut) {
+        methodName = useFeeOnTransfer ? 'swapExactTokensForETHSupportingFeeOnTransferTokens' : 'swapExactTokensForETH'
+        // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
+        args = [amountIn, amountOut, pathArr, _routerMode, to, deadline]
+        value = ZERO_HEX
+      } else {
+        methodName = useFeeOnTransfer
+          ? 'swapExactTokensForTokensSupportingFeeOnTransferTokens'
+          : 'swapExactTokensForTokens'
+        // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
+        args = [amountIn, amountOut, pathArr, _routerMode, to, deadline]
+        value = ZERO_HEX
+      }
+    }else{
+      if (etherIn) {
+        methodName = 'swapExactETHForTokensSupportingFeeOnTransferTokens'
+        // (uint amountOut, address[] calldata path, address to, uint deadline)
+        args = [amountOut, pathArr, _routerMode, to, deadline]
+        value = amountIn
+      } else if (etherOut) {
+        methodName = 'swapExactTokensForETHSupportingFeeOnTransferTokens'
+        // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
+        args = [amountOut, amountIn, pathArr, _routerMode, to, deadline]
+        value = ZERO_HEX
+      } else {
+        methodName = 'swapExactTokensForTokensSupportingFeeOnTransferTokens'
+        // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
+        args = [amountOut, amountIn, pathArr, _routerMode, to, deadline]
+        value = ZERO_HEX
+      }
     }
+
+
+    // switch (trade.tradeType) {
+    //   case TradeType.EXACT_INPUT:
+    //     if (etherIn) {
+    //       methodName = useFeeOnTransfer ? 'swapExactETHForTokensSupportingFeeOnTransferTokens' : 'swapExactETHForTokens'
+    //       // (uint amountOutMin, address[] calldata path, address to, uint deadline)
+    //       args = [amountOut, pathArr, _routerMode, to, deadline]
+    //       value = amountIn
+    //     } else if (etherOut) {
+    //       methodName = useFeeOnTransfer ? 'swapExactTokensForETHSupportingFeeOnTransferTokens' : 'swapExactTokensForETH'
+    //       // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
+    //       args = [amountIn, amountOut, pathArr, _routerMode, to, deadline]
+    //       value = ZERO_HEX
+    //     } else {
+    //       methodName = useFeeOnTransfer
+    //         ? 'swapExactTokensForTokensSupportingFeeOnTransferTokens'
+    //         : 'swapExactTokensForTokens'
+    //       // (uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline)
+    //       args = [amountIn, amountOut, pathArr, _routerMode, to, deadline]
+    //       value = ZERO_HEX
+    //     }
+    //     break
+    //   case TradeType.EXACT_OUTPUT:
+    //     invariant(!useFeeOnTransfer, 'EXACT_OUT_FOT')
+    //     if (etherIn) {
+    //       methodName = 'swapExactETHForTokensSupportingFeeOnTransferTokens'
+    //       // (uint amountOut, address[] calldata path, address to, uint deadline)
+    //       args = [amountOut, pathArr, _routerMode, to, deadline]
+    //       value = amountIn
+    //     } else if (etherOut) {
+    //       methodName = 'swapExactTokensForETHSupportingFeeOnTransferTokens'
+    //       // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
+    //       args = [amountOut, amountIn, pathArr, _routerMode, to, deadline]
+    //       value = ZERO_HEX
+    //     } else {
+    //       methodName = 'swapExactTokensForTokensSupportingFeeOnTransferTokens'
+    //       // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
+    //       args = [amountOut, amountIn, pathArr, _routerMode, to, deadline]
+    //       value = ZERO_HEX
+    //     }
+    //     break
+    // }
+
     return {
       methodName,
       args,
