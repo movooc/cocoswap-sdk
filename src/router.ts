@@ -135,8 +135,8 @@ export abstract class Router {
       if (etherIn) {
         methodName = 'swapExactETHForTokensSupportingFeeOnTransferTokens'
         // (uint amountOut, address[] calldata path, address to, uint deadline)
-        args = [amountIn, pathArr, _routerMode, to, deadline]
-        value = amountOut
+        args = [amountOut, pathArr, _routerMode, to, deadline]
+        value = amountIn
       } else if (etherOut) {
         methodName = 'swapExactTokensForETHSupportingFeeOnTransferTokens'
         // (uint amountOut, uint amountInMax, address[] calldata path, address to, uint deadline)
