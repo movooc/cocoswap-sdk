@@ -100,8 +100,17 @@ export abstract class Router {
     invariant(options.ttl > 0, 'TTL')
 
     const to: string = validateAndParseAddress(options.recipient)
-    const amountIn: string = toHex(trade.maximumAmountIn(options.allowedSlippage))
-    const amountOut: string = toHex(trade.minimumAmountOut(options.allowedSlippage))
+
+    let amountIn: string = toHex(trade.maximumAmountIn(options.allowedSlippage))
+    let amountOut: string = toHex(trade.minimumAmountOut(options.allowedSlippage))
+
+
+    if (!isExactIn) {
+      amountIn = toHex(trade.outputAmount)
+      amountOut = toHex(trade.inputAmount)
+    }
+
+    
     // const path: string[] = trade.route.path.map(token => token.address)
     const deadline = `0x${(Math.floor(new Date().getTime() / 1000) + options.ttl).toString(16)}`
     const _routerMode: string = `0x0${routerMode.toString(16)}`
