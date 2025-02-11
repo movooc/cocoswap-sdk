@@ -1,7 +1,7 @@
 {
   "name": "cocoswap-sdk",
   "license": "MIT",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "🛠 An SDK for building applications on top of BSCswap.",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",

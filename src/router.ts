@@ -73,13 +73,24 @@ export abstract class Router {
     let etherIn = false
     let etherOut = false
 
-    if (isBNB){
-      if (trade.inputAmount.currency.symbol == 'WBNB') {
-        etherIn = true
-      }
 
-      if (trade.outputAmount.currency.symbol == 'WBNB') {
-        etherOut = true
+    if (isBNB){
+      if(isExactIn){
+        if (trade.inputAmount.currency.symbol == 'WBNB') {
+          etherIn = true
+        }
+  
+        if (trade.outputAmount.currency.symbol == 'WBNB') {
+          etherOut = true
+        }
+      }else{
+        if (trade.inputAmount.currency.symbol == 'WBNB') {
+          etherOut = true
+        }
+  
+        if (trade.outputAmount.currency.symbol == 'WBNB') {
+          etherIn = true
+        }
       }
     }
 
