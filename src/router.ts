@@ -106,7 +106,7 @@ export abstract class Router {
 
 
     if (!isExactIn) {
-      amountIn = toHex(trade.outputAmount)
+      amountIn = toHex(trade.minimumAmountOutWithExactIn(options.allowedSlippage))
       amountOut = toHex(trade.inputAmount)
     }
 
