@@ -223,7 +223,7 @@ export class Trade {
       return this.outputAmount
     } else {
       const slippageAdjustedAmountOut = new Fraction(ONE)
-        .add(slippageTolerance)
+        .subtract(slippageTolerance)
         .invert()
         .multiply(this.outputAmount.raw).quotient
       return this.outputAmount instanceof TokenAmount
