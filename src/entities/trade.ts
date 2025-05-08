@@ -237,7 +237,7 @@ export class Trade {
     if (this.tradeType === TradeType.EXACT_INPUT && false) {
       return this.inputAmount
     } else {
-      const slippageAdjustedAmountIn = new Fraction(ONE).add(slippageTolerance).multiply(this.inputAmount.raw).quotient
+      const slippageAdjustedAmountIn = new Fraction(ONE).subtract(slippageTolerance).multiply(this.inputAmount.raw).quotient
       return this.inputAmount instanceof TokenAmount
         ? new TokenAmount(this.inputAmount.token, slippageAdjustedAmountIn)
         : CurrencyAmount.ether(slippageAdjustedAmountIn)
