@@ -232,6 +232,18 @@ export class Trade {
     }
   }
 
+  public maximumAmountInWithExactIn(slippageTolerance: Percent): CurrencyAmount {
+    invariant(!slippageTolerance.lessThan(ZERO), 'SLIPPAGE_TOLERANCE')
+    if (this.tradeType === TradeType.EXACT_INPUT && false) {
+      return this.inputAmount
+    } else {
+      const slippageAdjustedAmountIn = new Fraction(ONE).add(slippageTolerance).multiply(this.inputAmount.raw).quotient
+      return this.inputAmount instanceof TokenAmount
+        ? new TokenAmount(this.inputAmount.token, slippageAdjustedAmountIn)
+        : CurrencyAmount.ether(slippageAdjustedAmountIn)
+    }
+  }
+
   /**
    * Get the maximum amount in that can be spent via this trade for the given slippage tolerance
    * @param slippageTolerance tolerance of unfavorable slippage from the execution price of this trade
